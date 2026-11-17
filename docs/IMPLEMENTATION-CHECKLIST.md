@@ -15,10 +15,19 @@ Status definitions: **Done** = implemented and verified; **In progress** = code 
 ## Existing tool catalog audit
 - [x] Enumerate the 24 current registry entries and document actual supported scope in `docs/TOOL-INVENTORY.md`.
 - [ ] Verify all 24 tools end-to-end: metadata, errors, boundaries, keyboard/mobile behavior, copy/download/reset.
-- [x] Add Node built-in test coverage for shared core calculations and converters.\n- [ ] Add browser-level tests for every tool implementation.
+- [x] Add Node built-in test coverage for shared core calculations and converters.
+- [ ] Add browser-level tests for every tool implementation.
 - [ ] Mark unsupported or server-dependent capabilities honestly.
 
-## Phase 2 — functional core\n- [x] Add reusable validated core functions for calculations, dates, unit conversion, CSV/JSON, slugs, and secure passwords.\n- [x] Add adjustable CSS box-shadow controls and stricter gradient validation.\n- [x] Add text result download and accessible live result announcements.\n- [x] Add syntax and targeted runtime validation; see `docs/TOOL-INVENTORY.md`.\n- [ ] Observe a passing GitHub Actions run for the Node test suite.\n- [ ] Complete browser-based QA across all current tools.\n\n## Content and policy
+## Phase 2 — functional core
+- [x] Add reusable validated core functions for calculations, dates, unit conversion, CSV/JSON, slugs, and secure passwords.
+- [x] Add adjustable CSS box-shadow controls and stricter gradient validation.
+- [x] Add text result download and accessible live result announcements.
+- [x] Add syntax and targeted runtime validation; see `docs/TOOL-INVENTORY.md`.
+- [ ] Observe a passing GitHub Actions run for the Node test suite.
+- [ ] Complete browser-based QA across all current tools.
+
+## Content and policy
 - [ ] Review all legal pages against actual data collection and third-party services.
 - [ ] Add original blog articles with editorial review and citations where needed.
 - [ ] Configure contact delivery backend and test it end-to-end.

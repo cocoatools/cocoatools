@@ -24,7 +24,7 @@ Status definitions: **Done** = implemented and verified; **In progress** = code 
 - [x] Add adjustable CSS box-shadow controls and stricter gradient validation.
 - [x] Add text result download and accessible live result announcements.
 - [x] Add syntax and targeted runtime validation; see `docs/TOOL-INVENTORY.md`.
-- [ ] Observe a passing GitHub Actions run for the Node test suite.
+- [x] GitHub Actions syntax checks and Node core test suite passed on commit `6a4a659d60d266660a3fb8742bd5d5a47cd5d179` (run #13); later changes are documentation-only.
 - [ ] Complete browser-based QA across all current tools.
 
 ## Content and policy

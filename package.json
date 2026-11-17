@@ -1,0 +1,13 @@
+{
+  "name": "cocoa-tools",
+  "version": "0.2.0",
+  "private": true,
+  "description": "COCOA TOOLS browser-based utilities",
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "check": "node --check assets/app.js && node --check assets/tool-core.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -619,7 +619,8 @@ function hashString(input, algorithm = "SHA-256") {
 function initToolPage() {
   const params = new URLSearchParams(window.location.search);
   const slug = params.get("tool") || "word-counter";
-  const tool = TOOL_DATA.find((item) => item.slug === slug);\n  if (!tool) {\n    const title = document.getElementById("toolTitle");\n    const intro = document.getElementById("toolIntro");\n    if (title) title.textContent = "Tool not found";\n    if (intro) intro.textContent = "This tool URL does not match an available tool. Browse the library to find a working utility.";\n    document.title = "Tool Not Found | COCOA TOOLS";\n    const inputs = document.getElementById("toolInputs");\n    if (inputs) inputs.textContent = "No tool is available at this address.";\n    return;\n  }
+  const tool = TOOL_DATA.find((item) => item.slug === slug);
+  if (!tool) {\n    const title = document.getElementById("toolTitle");\n    const intro = document.getElementById("toolIntro");\n    if (title) title.textContent = "Tool not found";\n    if (intro) intro.textContent = "This tool URL does not match an available tool. Browse the library to find a working utility.";\n    document.title = "Tool Not Found | COCOA TOOLS";\n    const inputs = document.getElementById("toolInputs");\n    if (inputs) inputs.textContent = "No tool is available at this address.";\n    return;\n  }
 
   const titleNode = document.getElementById("toolTitle");
   const introNode = document.getElementById("toolIntro");
@@ -755,9 +756,10 @@ function initToolPage() {
       }
       case "gradient-generator": {
         const colors = value.split(",").map((part) => part.trim()).filter(Boolean);
-        const start = colors[0] || "#2563eb";
-        const end = colors[1] || "#8b5cf6";
-        setResult(`background: linear-gradient(135deg, ${start}, ${end});`);
+        if (colors.length !== 2 || colors.some(color => !/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(color))) {
+          throw new TypeError("Enter exactly two HEX colors, separated by a comma (for example #2563eb, #8b5cf6).");
+        }
+        setResult(`background: linear-gradient(135deg, ${colors[0]}, ${colors[1]});`);
         break;
       }
       case "box-shadow-generator": {
@@ -812,6 +814,7 @@ function initToolPage() {
       }
       case "url-parser": {
         const parsed = new URL(value.trim());
+        if (!["http:", "https:"].includes(parsed.protocol)) throw new TypeError("Only HTTP and HTTPS URLs are supported.");
         setResult(`Protocol: ${parsed.protocol}\nHost: ${parsed.host}\nPathname: ${parsed.pathname}\nSearch: ${parsed.search}\nHash: ${parsed.hash}`);
         break;
       }
@@ -877,7 +880,7 @@ function initToolPage() {
     case "password-generator":
       inputWrap.innerHTML = `
         <label for="passLength">Length</label>
-        <input id="passLength" type="number" min="6" max="128" value="16" />
+        <input id="passLength" type="number" min="8" max="128" value="16" />
         <label><input id="includeUpper" type="checkbox" checked /> Uppercase</label>
         <label><input id="includeLower" type="checkbox" checked /> Lowercase</label>
         <label><input id="includeNumbers" type="checkbox" checked /> Numbers</label>
@@ -960,6 +963,7 @@ function initToolPage() {
   if (copyButton) {
     copyButton.addEventListener("click", async () => {
       const text = resultNode.textContent.trim();
+      if (!text) { copyButton.textContent = "Nothing to copy"; return; }
       try {
         await navigator.clipboard.writeText(text);
         copyButton.textContent = "Copied";
@@ -972,12 +976,27 @@ function initToolPage() {
 
   if (resetButton) {
     resetButton.addEventListener("click", () => {
-      const field = document.getElementById("toolInput");
-      if (field) field.value = "";
-      resultNode.innerHTML = "";
-      if (document.getElementById("caseType")) document.getElementById("caseType").value = "lowercase";
+      inputWrap.querySelectorAll("input, textarea").forEach(field => {
+        if (field.type === "checkbox") field.checked = field.defaultChecked;
+        else field.value = field.defaultValue;
+      });
+      inputWrap.querySelectorAll("select").forEach(field => field.selectedIndex = 0);
+      resultNode.textContent = "";
+      if (copyButton) copyButton.textContent = "Copy";
     });
   }
+  const downloadButton = document.getElementById("downloadResult");
+  if (downloadButton) downloadButton.addEventListener("click", () => {
+    const text = resultNode.textContent.trim();
+    if (!text) return;
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `cocoa-tools-${tool.slug}-result.txt`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  });
 
   if (["word-counter", "uuid-generator", "box-shadow-generator"].includes(tool.slug)) { try { runTool(); } catch (error) { setResult("Error: " + error.message); } }
 }

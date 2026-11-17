@@ -903,7 +903,7 @@ function initToolPage() {
         break;
       }
       default:
-        setResult("This tool is ready for use.");
+        setResult("This tool is not implemented yet. Please choose an available tool from the library.");
     }
   };
 
@@ -997,7 +997,7 @@ function initToolPage() {
       inputWrap.innerHTML = '<label for="toolInput">Text</label><textarea id="toolInput" rows="8" placeholder="Type text to hash..."></textarea><label for="hashAlgo">Algorithm</label><select id="hashAlgo"><option value="SHA-256">SHA-256</option><option value="SHA-1">SHA-1</option><option value="SHA-512">SHA-512</option></select><button class="button button-primary" id="runTool">Generate</button>';
       break;
     default:
-      inputWrap.innerHTML = '<label for="toolInput">Input</label><textarea id="toolInput" rows="10"></textarea><button class="button button-primary" id="runTool">Run</button>';
+      inputWrap.innerHTML = '<p class="form-message">This tool does not have an implementation yet. No sample result will be shown.</p>';
   }
 
   const runButton = document.getElementById("runTool");

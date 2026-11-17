@@ -619,7 +619,7 @@ function hashString(input, algorithm = "SHA-256") {
 function initToolPage() {
   const params = new URLSearchParams(window.location.search);
   const slug = params.get("tool") || "word-counter";
-  const tool = TOOL_DATA.find((item) => item.slug === slug) || TOOL_DATA[0];
+  const tool = TOOL_DATA.find((item) => item.slug === slug);\n  if (!tool) {\n    const title = document.getElementById("toolTitle");\n    const intro = document.getElementById("toolIntro");\n    if (title) title.textContent = "Tool not found";\n    if (intro) intro.textContent = "This tool URL does not match an available tool. Browse the library to find a working utility.";\n    document.title = "Tool Not Found | COCOA TOOLS";\n    const inputs = document.getElementById("toolInputs");\n    if (inputs) inputs.textContent = "No tool is available at this address.";\n    return;\n  }
 
   const titleNode = document.getElementById("toolTitle");
   const introNode = document.getElementById("toolIntro");
@@ -656,8 +656,8 @@ function initToolPage() {
 
   const runTool = () => {
     const inputResult = document.getElementById("toolInput");
-    if (!inputResult) return;
-    const value = inputResult.value;
+    const value = inputResult ? inputResult.value : "";
+    if (!inputResult && !["uuid-generator", "password-generator", "box-shadow-generator"].includes(tool.slug)) return;
 
     switch (tool.slug) {
       case "word-counter": {
@@ -686,19 +686,18 @@ function initToolPage() {
         break;
       }
       case "text-to-slug": {
-        const slug = value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
-        setResult(slug || "your-slug");
+        setResult(CocoaToolCore.slugify(value));
         break;
       }
       case "password-generator": {
-        const len = Number(document.getElementById("passLength").value || 12);
-        const upper = document.getElementById("includeUpper").checked;
-        const lower = document.getElementById("includeLower").checked;
-        const numbers = document.getElementById("includeNumbers").checked;
-        const symbols = document.getElementById("includeSymbols").checked;
-        const chars = `${upper ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : ""}${lower ? "abcdefghijklmnopqrstuvwxyz" : ""}${numbers ? "0123456789" : ""}${symbols ? "!@#$%^&*()_+~`|}{[]:;?><,.-=" : ""}`;
-        const generated = Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
-        setResult(generated || "Please enable at least one character set.");
+        const len = document.getElementById("passLength").value;
+        const sets = {
+          upper: document.getElementById("includeUpper").checked,
+          lower: document.getElementById("includeLower").checked,
+          numbers: document.getElementById("includeNumbers").checked,
+          symbols: document.getElementById("includeSymbols").checked
+        };
+        setResult(CocoaToolCore.randomPassword(len, sets));
         break;
       }
       case "uuid-generator": {
@@ -766,45 +765,32 @@ function initToolPage() {
         break;
       }
       case "bmi-calculator": {
-        const weight = Number(document.getElementById("weight").value);
-        const height = Number(document.getElementById("height").value) / 100;
-        const bmi = weight / (height * height);
-        const status = bmi < 18.5 ? "Underweight" : bmi < 25 ? "Healthy" : bmi < 30 ? "Overweight" : "Obese";
-        setResult(`BMI: ${bmi.toFixed(2)}\nCategory: ${status}`);
+        const result = CocoaToolCore.bmi(document.getElementById("weight").value, document.getElementById("height").value);
+        setResult(`BMI: ${result.value.toFixed(2)}\nCategory: ${result.category}\nThis is a screening estimate, not a medical diagnosis.`);
         break;
       }
       case "percentage-calculator": {
-        const value = Number(document.getElementById("calcValue").value);
-        const percent = Number(document.getElementById("calcPercent").value);
-        const result = (value * percent) / 100;
-        setResult(`${percent}% of ${value} = ${result}`);
+        const amount = document.getElementById("calcValue").value;
+        const percent = document.getElementById("calcPercent").value;
+        setResult(`${percent}% of ${amount} = ${numberFormat(CocoaToolCore.percentage(amount, percent))}`);
         break;
       }
       case "age-calculator": {
-        const birthDate = new Date(document.getElementById("dob").value);
-        const today = new Date(document.getElementById("targetDate").value || new Date().toISOString().slice(0, 10));
-        let years = today.getFullYear() - birthDate.getFullYear();
-        let months = today.getMonth() - birthDate.getMonth();
-        let days = today.getDate() - birthDate.getDate();
-        if (days < 0) {
-          months -= 1;
-          days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
-        }
-        if (months < 0) {
-          years -= 1;
-          months += 12;
-        }
-        setResult(`Age: ${years} years, ${months} months, ${days} days`);
+        const birth = document.getElementById("dob").value;
+        const targetField = document.getElementById("targetDate");
+        const now = new Date();
+        const target = targetField.value || [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join("-");
+        const result = CocoaToolCore.age(birth, target);
+        setResult(`Age: ${result.years} years, ${result.months} months, ${result.days} days`);
         break;
       }
       case "loan-calculator": {
-        const principal = Number(document.getElementById("loanAmount").value);
-        const rate = Number(document.getElementById("loanRate").value) / 100 / 12;
-        const months = Number(document.getElementById("loanTerm").value) * 12;
-        const monthly = principal * rate / (1 - Math.pow(1 + rate, -months));
-        const total = monthly * months;
-        const interest = total - principal;
-        setResult(`Monthly payment: $${monthly.toFixed(2)}\nTotal repayment: $${total.toFixed(2)}\nTotal interest: $${interest.toFixed(2)}`);
+        const result = CocoaToolCore.loanPayment(
+          document.getElementById("loanAmount").value,
+          document.getElementById("loanRate").value,
+          document.getElementById("loanTerm").value
+        );
+        setResult(`Monthly payment: $${result.monthly.toFixed(2)}\nTotal repayment: $${result.total.toFixed(2)}\nTotal interest: $${result.interest.toFixed(2)}\nPayments: ${result.months}`);
         break;
       }
       case "keyword-density": {
@@ -830,36 +816,18 @@ function initToolPage() {
         break;
       }
       case "speed-converter": {
-        const speed = Number(document.getElementById("speedValue").value);
-        const from = document.getElementById("speedFrom").value;
-        const to = document.getElementById("speedTo").value;
-        const map = { "kmh": 1, "mph": 0.621371, "mps": 0.277778, "knot": 0.539957 };
-        const inKmh = speed / map[from];
-        const converted = inKmh * map[to];
-        setResult(`${speed} ${from} = ${converted.toFixed(3)} ${to}`);
+        const speed = document.getElementById("speedValue").value;
+        const from = { kmh: "km/h", mph: "mph", mps: "m/s", knot: "knot" }[document.getElementById("speedFrom").value];
+        const to = { kmh: "km/h", mph: "mph", mps: "m/s", knot: "knot" }[document.getElementById("speedTo").value];
+        setResult(`${speed} ${from} = ${CocoaToolCore.speed(speed, from, to).toFixed(4)} ${to}`);
         break;
       }
       case "unit-converter": {
-        const value = Number(document.getElementById("conversionValue").value);
+        const amount = document.getElementById("conversionValue").value;
         const from = document.getElementById("unitFrom").value;
         const to = document.getElementById("unitTo").value;
-        const conversionMap = {
-          km: 1000, m: 1, cm: 0.01, mile: 1609.344, foot: 0.3048,
-          kg: 1, g: 0.001, lb: 0.453592, oz: 0.0283495,
-          c: 1, f: (value) => (value - 32) * 5/9, k: (value) => value - 273.15
-        };
-        let result;
-        if (from === "c" && to === "f") result = value * 9/5 + 32;
-        else if (from === "f" && to === "c") result = (value - 32) * 5/9;
-        else if (from === "k" && to === "c") result = value - 273.15;
-        else if (from === "c" && to === "k") result = value + 273.15;
-        else if (from === "k" && to === "f") result = (value - 273.15) * 9/5 + 32;
-        else if (from === "f" && to === "k") result = (value - 32) * 5/9 + 273.15;
-        else {
-          const base = value * conversionMap[from];
-          result = base / conversionMap[to];
-        }
-        setResult(`${value} ${from} = ${result.toFixed(4)} ${to}`);
+        const converted = CocoaToolCore.convert(amount, from, to, "length");
+        setResult(`${amount} ${from} = ${converted.toFixed(6)} ${to}`);
         break;
       }
       case "markdown-to-html": {
@@ -875,26 +843,12 @@ function initToolPage() {
         break;
       }
       case "csv-to-json": {
-        const lines = value.trim().split(/\n+/);
-        const [header, ...rows] = lines;
-        const keys = header.split(",").map((item) => item.trim());
-        const json = rows.map((row) => {
-          const values = row.split(",");
-          return Object.fromEntries(keys.map((key, index) => [key, values[index]?.trim() ?? ""]));
-        });
+        const json = CocoaToolCore.parseCsv(value);
         setResult(JSON.stringify(json, null, 2));
         break;
       }
       case "json-to-csv": {
-        try {
-          const parsed = JSON.parse(value);
-          const array = Array.isArray(parsed) ? parsed : [parsed];
-          const headers = [...new Set(array.flatMap((entry) => Object.keys(entry)))];
-          const rows = [headers.join(",")].concat(array.map((entry) => headers.map((header) => JSON.stringify(entry[header] ?? "")).join(",")));
-          setResult(rows.join("\n"));
-        } catch (error) {
-          setResult(`Invalid JSON: ${error.message}`);
-        }
+        setResult(CocoaToolCore.jsonToCsv(value));
         break;
       }
       case "hash-generator": {
@@ -1001,7 +955,7 @@ function initToolPage() {
   }
 
   const runButton = document.getElementById("runTool");
-  if (runButton) runButton.addEventListener("click", runTool);
+  if (runButton) runButton.addEventListener("click", () => { try { runTool(); } catch (error) { setResult("Error: " + error.message); } });
 
   if (copyButton) {
     copyButton.addEventListener("click", async () => {
@@ -1025,7 +979,7 @@ function initToolPage() {
     });
   }
 
-  if (tool.slug === "word-counter") runTool();
+  if (["word-counter", "uuid-generator", "box-shadow-generator"].includes(tool.slug)) { try { runTool(); } catch (error) { setResult("Error: " + error.message); } }
 }
 
 function initPage() {

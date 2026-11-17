@@ -151,7 +151,7 @@ const TOOL_DATA = [
     slug: "gradient-generator",
     title: "CSS Gradient Generator",
     category: "CSS Tools",
-    description: "Generate smooth linear or radial gradients for web design work.",
+    description: "Generate a CSS linear gradient from two validated HEX colors.",
     icon: "🌈",
     steps: [
       "Choose two or more colors.",
@@ -303,7 +303,7 @@ const TOOL_DATA = [
     slug: "unit-converter",
     title: "Unit Converter",
     category: "Unit Conversion Tools",
-    description: "Convert units like length, weight, temperature, and speed.",
+    description: "Convert common metric and imperial length units accurately.",
     icon: "📐",
     popular: true,
     steps: [
@@ -312,7 +312,7 @@ const TOOL_DATA = [
       "Enter the value and calculate the result."
     ],
     faqs: [
-      { q: "Does it cover metric and imperial?", a: "Yes. It includes common conversions used in everyday tasks and technical work." }
+      { q: "Does it cover metric and imperial?", a: "This version supports length units including meters, kilometers, centimeters, millimeters, miles, feet, and inches." }
     ]
   },
   {
@@ -763,7 +763,18 @@ function initToolPage() {
         break;
       }
       case "box-shadow-generator": {
-        setResult("box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);\n-webkit-box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);\n-moz-box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);");
+        const x = Number(document.getElementById("shadowX").value);
+        const y = Number(document.getElementById("shadowY").value);
+        const blur = Number(document.getElementById("shadowBlur").value);
+        const spread = Number(document.getElementById("shadowSpread").value);
+        const opacity = Number(document.getElementById("shadowOpacity").value);
+        const color = document.getElementById("shadowColor").value;
+        const inset = document.getElementById("shadowInset").checked ? "inset " : "";
+        if (![x, y, blur, spread, opacity].every(Number.isFinite) || Math.abs(x) > 100 || Math.abs(y) > 100 || blur < 0 || blur > 100 || Math.abs(spread) > 100 || opacity < 0 || opacity > 1 || !/^#[0-9a-f]{6}$/i.test(color)) {
+          throw new TypeError("Use valid HEX color, offsets from -100 to 100px, blur from 0 to 100px, and opacity from 0 to 1.");
+        }
+        const red = parseInt(color.slice(1, 3), 16), green = parseInt(color.slice(3, 5), 16), blue = parseInt(color.slice(5, 7), 16);
+        setResult(`box-shadow: ${inset}${x}px ${y}px ${blur}px ${spread}px rgba(${red}, ${green}, ${blue}, ${opacity});`);
         break;
       }
       case "bmi-calculator": {
@@ -904,7 +915,16 @@ function initToolPage() {
       inputWrap.innerHTML = '<label for="toolInput">Colors</label><input id="toolInput" type="text" value="#2563eb, #8b5cf6" /><button class="button button-primary" id="runTool">Generate</button>';
       break;
     case "box-shadow-generator":
-      inputWrap.innerHTML = '<button class="button button-primary" id="runTool">Generate shadow</button>';
+      inputWrap.innerHTML = `
+        <label for="shadowX">Horizontal offset (px)</label><input id="shadowX" type="number" min="-100" max="100" value="0" />
+        <label for="shadowY">Vertical offset (px)</label><input id="shadowY" type="number" min="-100" max="100" value="18" />
+        <label for="shadowBlur">Blur radius (px)</label><input id="shadowBlur" type="number" min="0" max="100" value="40" />
+        <label for="shadowSpread">Spread radius (px)</label><input id="shadowSpread" type="number" min="-100" max="100" value="0" />
+        <label for="shadowColor">Shadow color</label><input id="shadowColor" type="color" value="#0f172a" />
+        <label for="shadowOpacity">Opacity (0–1)</label><input id="shadowOpacity" type="number" min="0" max="1" step="0.05" value="0.18" />
+        <label><input id="shadowInset" type="checkbox" /> Inset shadow</label>
+        <button class="button button-primary" id="runTool">Generate CSS</button>
+      `;
       break;
     case "bmi-calculator":
       inputWrap.innerHTML = '<label for="weight">Weight (kg)</label><input id="weight" type="number" value="70" /><label for="height">Height (cm)</label><input id="height" type="number" value="175" /><button class="button button-primary" id="runTool">Calculate BMI</button>';

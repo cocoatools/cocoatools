@@ -62,13 +62,25 @@
   }
   function age(birthText, targetText) {
     const b = dateParts(birthText), t = dateParts(targetText);
-    if (Date.UTC(t.y, t.m - 1, t.d) < Date.UTC(b.y, b.m - 1, b.d)) throw new RangeError("Target date must be on or after the birth date.");
-    let years = t.y - b.y, months = t.m - b.m, days = t.d - b.d;
-    if (days < 0) {
-      months--;
-      days += new Date(Date.UTC(t.y, t.m - 1, 0)).getUTCDate();
+    const targetMs = Date.UTC(t.y, t.m - 1, t.d);
+    const birthMs = Date.UTC(b.y, b.m - 1, b.d);
+    if (targetMs < birthMs) throw new RangeError("Target date must be on or after the birth date.");
+    const shiftMonths = (date, amount) => {
+      const first = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + amount, 1));
+      const lastDay = new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth() + 1, 0)).getUTCDate();
+      return new Date(Date.UTC(first.getUTCFullYear(), first.getUTCMonth(), Math.min(date.getUTCDate(), lastDay)));
+    };
+    const target = new Date(targetMs);
+    let current = new Date(birthMs), years = 0, months = 0;
+    while (shiftMonths(current, 12).getTime() <= targetMs) {
+      current = shiftMonths(current, 12);
+      years++;
     }
-    if (months < 0) { years--; months += 12; }
+    while (shiftMonths(current, 1).getTime() <= targetMs) {
+      current = shiftMonths(current, 1);
+      months++;
+    }
+    const days = Math.round((target.getTime() - current.getTime()) / 86400000);
     return { years, months, days };
   }
   function slugify(input) {

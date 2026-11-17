@@ -620,7 +620,16 @@ function initToolPage() {
   const params = new URLSearchParams(window.location.search);
   const slug = params.get("tool") || "word-counter";
   const tool = TOOL_DATA.find((item) => item.slug === slug);
-  if (!tool) {\n    const title = document.getElementById("toolTitle");\n    const intro = document.getElementById("toolIntro");\n    if (title) title.textContent = "Tool not found";\n    if (intro) intro.textContent = "This tool URL does not match an available tool. Browse the library to find a working utility.";\n    document.title = "Tool Not Found | COCOA TOOLS";\n    const inputs = document.getElementById("toolInputs");\n    if (inputs) inputs.textContent = "No tool is available at this address.";\n    return;\n  }
+  if (!tool) {
+    const title = document.getElementById("toolTitle");
+    const intro = document.getElementById("toolIntro");
+    if (title) title.textContent = "Tool not found";
+    if (intro) intro.textContent = "This tool URL does not match an available tool. Browse the library to find a working utility.";
+    document.title = "Tool Not Found | COCOA TOOLS";
+    const inputs = document.getElementById("toolInputs");
+    if (inputs) inputs.textContent = "No tool is available at this address.";
+    return;
+  }
 
   const titleNode = document.getElementById("toolTitle");
   const introNode = document.getElementById("toolIntro");

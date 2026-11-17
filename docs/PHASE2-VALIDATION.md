@@ -25,7 +25,7 @@ Validation performed against the current Phase 2 branch source.
 14. Password length and requested character group constraints using an injected deterministic crypto test double.
 
 ## GitHub Actions
-A workflow has been added to run `npm run check` and `npm test` on pushes and pull requests. The last observed successful run before this validation note was for an earlier branch commit; a new run is expected after this commit. Do not treat earlier CI success as proof that subsequent commits passed.
+A workflow runs `npm run check` and `npm test` on pushes and pull requests. GitHub Actions run #13 completed successfully for commit `6a4a659d60d266660a3fb8742bd5d5a47cd5d179`, including both syntax checks and the Node test suite. Commits after that successful run only update documentation/checklist files; the JavaScript and test sources are unchanged.
 
 ## Not covered yet
 - Full browser automation, page rendering, mobile layout, keyboard navigation, accessibility audits, and end-to-end tool workflows.

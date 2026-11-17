@@ -151,7 +151,7 @@ const TOOL_DATA = [
     slug: "gradient-generator",
     title: "CSS Gradient Generator",
     category: "CSS Tools",
-    description: "Generate smooth linear or radial gradients for web design work.",
+    description: "Generate a CSS linear gradient from two validated HEX colors.",
     icon: "🌈",
     steps: [
       "Choose two or more colors.",
@@ -303,7 +303,7 @@ const TOOL_DATA = [
     slug: "unit-converter",
     title: "Unit Converter",
     category: "Unit Conversion Tools",
-    description: "Convert units like length, weight, temperature, and speed.",
+    description: "Convert common metric and imperial length units accurately.",
     icon: "📐",
     popular: true,
     steps: [
@@ -312,7 +312,7 @@ const TOOL_DATA = [
       "Enter the value and calculate the result."
     ],
     faqs: [
-      { q: "Does it cover metric and imperial?", a: "Yes. It includes common conversions used in everyday tasks and technical work." }
+      { q: "Does it cover metric and imperial?", a: "This version supports length units including meters, kilometers, centimeters, millimeters, miles, feet, and inches." }
     ]
   },
   {
@@ -619,7 +619,17 @@ function hashString(input, algorithm = "SHA-256") {
 function initToolPage() {
   const params = new URLSearchParams(window.location.search);
   const slug = params.get("tool") || "word-counter";
-  const tool = TOOL_DATA.find((item) => item.slug === slug) || TOOL_DATA[0];
+  const tool = TOOL_DATA.find((item) => item.slug === slug);
+  if (!tool) {
+    const title = document.getElementById("toolTitle");
+    const intro = document.getElementById("toolIntro");
+    if (title) title.textContent = "Tool not found";
+    if (intro) intro.textContent = "This tool URL does not match an available tool. Browse the library to find a working utility.";
+    document.title = "Tool Not Found | COCOA TOOLS";
+    const inputs = document.getElementById("toolInputs");
+    if (inputs) inputs.textContent = "No tool is available at this address.";
+    return;
+  }
 
   const titleNode = document.getElementById("toolTitle");
   const introNode = document.getElementById("toolIntro");
@@ -656,8 +666,8 @@ function initToolPage() {
 
   const runTool = () => {
     const inputResult = document.getElementById("toolInput");
-    if (!inputResult) return;
-    const value = inputResult.value;
+    const value = inputResult ? inputResult.value : "";
+    if (!inputResult && !["uuid-generator", "password-generator", "box-shadow-generator"].includes(tool.slug)) return;
 
     switch (tool.slug) {
       case "word-counter": {
@@ -686,19 +696,18 @@ function initToolPage() {
         break;
       }
       case "text-to-slug": {
-        const slug = value.toLowerCase().trim().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-");
-        setResult(slug || "your-slug");
+        setResult(CocoaToolCore.slugify(value));
         break;
       }
       case "password-generator": {
-        const len = Number(document.getElementById("passLength").value || 12);
-        const upper = document.getElementById("includeUpper").checked;
-        const lower = document.getElementById("includeLower").checked;
-        const numbers = document.getElementById("includeNumbers").checked;
-        const symbols = document.getElementById("includeSymbols").checked;
-        const chars = `${upper ? "ABCDEFGHIJKLMNOPQRSTUVWXYZ" : ""}${lower ? "abcdefghijklmnopqrstuvwxyz" : ""}${numbers ? "0123456789" : ""}${symbols ? "!@#$%^&*()_+~`|}{[]:;?><,.-=" : ""}`;
-        const generated = Array.from({ length: len }, () => chars[Math.floor(Math.random() * chars.length)]).join("");
-        setResult(generated || "Please enable at least one character set.");
+        const len = document.getElementById("passLength").value;
+        const sets = {
+          upper: document.getElementById("includeUpper").checked,
+          lower: document.getElementById("includeLower").checked,
+          numbers: document.getElementById("includeNumbers").checked,
+          symbols: document.getElementById("includeSymbols").checked
+        };
+        setResult(CocoaToolCore.randomPassword(len, sets));
         break;
       }
       case "uuid-generator": {
@@ -756,55 +765,54 @@ function initToolPage() {
       }
       case "gradient-generator": {
         const colors = value.split(",").map((part) => part.trim()).filter(Boolean);
-        const start = colors[0] || "#2563eb";
-        const end = colors[1] || "#8b5cf6";
-        setResult(`background: linear-gradient(135deg, ${start}, ${end});`);
+        if (colors.length !== 2 || colors.some(color => !/^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i.test(color))) {
+          throw new TypeError("Enter exactly two HEX colors, separated by a comma (for example #2563eb, #8b5cf6).");
+        }
+        setResult(`background: linear-gradient(135deg, ${colors[0]}, ${colors[1]});`);
         break;
       }
       case "box-shadow-generator": {
-        setResult("box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);\n-webkit-box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);\n-moz-box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);");
+        const x = Number(document.getElementById("shadowX").value);
+        const y = Number(document.getElementById("shadowY").value);
+        const blur = Number(document.getElementById("shadowBlur").value);
+        const spread = Number(document.getElementById("shadowSpread").value);
+        const opacity = Number(document.getElementById("shadowOpacity").value);
+        const color = document.getElementById("shadowColor").value;
+        const inset = document.getElementById("shadowInset").checked ? "inset " : "";
+        if (![x, y, blur, spread, opacity].every(Number.isFinite) || Math.abs(x) > 100 || Math.abs(y) > 100 || blur < 0 || blur > 100 || Math.abs(spread) > 100 || opacity < 0 || opacity > 1 || !/^#[0-9a-f]{6}$/i.test(color)) {
+          throw new TypeError("Use valid HEX color, offsets from -100 to 100px, blur from 0 to 100px, and opacity from 0 to 1.");
+        }
+        const red = parseInt(color.slice(1, 3), 16), green = parseInt(color.slice(3, 5), 16), blue = parseInt(color.slice(5, 7), 16);
+        setResult(`box-shadow: ${inset}${x}px ${y}px ${blur}px ${spread}px rgba(${red}, ${green}, ${blue}, ${opacity});`);
         break;
       }
       case "bmi-calculator": {
-        const weight = Number(document.getElementById("weight").value);
-        const height = Number(document.getElementById("height").value) / 100;
-        const bmi = weight / (height * height);
-        const status = bmi < 18.5 ? "Underweight" : bmi < 25 ? "Healthy" : bmi < 30 ? "Overweight" : "Obese";
-        setResult(`BMI: ${bmi.toFixed(2)}\nCategory: ${status}`);
+        const result = CocoaToolCore.bmi(document.getElementById("weight").value, document.getElementById("height").value);
+        setResult(`BMI: ${result.value.toFixed(2)}\nCategory: ${result.category}\nThis is a screening estimate, not a medical diagnosis.`);
         break;
       }
       case "percentage-calculator": {
-        const value = Number(document.getElementById("calcValue").value);
-        const percent = Number(document.getElementById("calcPercent").value);
-        const result = (value * percent) / 100;
-        setResult(`${percent}% of ${value} = ${result}`);
+        const amount = document.getElementById("calcValue").value;
+        const percent = document.getElementById("calcPercent").value;
+        setResult(`${percent}% of ${amount} = ${numberFormat(CocoaToolCore.percentage(amount, percent))}`);
         break;
       }
       case "age-calculator": {
-        const birthDate = new Date(document.getElementById("dob").value);
-        const today = new Date(document.getElementById("targetDate").value || new Date().toISOString().slice(0, 10));
-        let years = today.getFullYear() - birthDate.getFullYear();
-        let months = today.getMonth() - birthDate.getMonth();
-        let days = today.getDate() - birthDate.getDate();
-        if (days < 0) {
-          months -= 1;
-          days += new Date(today.getFullYear(), today.getMonth(), 0).getDate();
-        }
-        if (months < 0) {
-          years -= 1;
-          months += 12;
-        }
-        setResult(`Age: ${years} years, ${months} months, ${days} days`);
+        const birth = document.getElementById("dob").value;
+        const targetField = document.getElementById("targetDate");
+        const now = new Date();
+        const target = targetField.value || [now.getFullYear(), String(now.getMonth() + 1).padStart(2, "0"), String(now.getDate()).padStart(2, "0")].join("-");
+        const result = CocoaToolCore.age(birth, target);
+        setResult(`Age: ${result.years} years, ${result.months} months, ${result.days} days`);
         break;
       }
       case "loan-calculator": {
-        const principal = Number(document.getElementById("loanAmount").value);
-        const rate = Number(document.getElementById("loanRate").value) / 100 / 12;
-        const months = Number(document.getElementById("loanTerm").value) * 12;
-        const monthly = principal * rate / (1 - Math.pow(1 + rate, -months));
-        const total = monthly * months;
-        const interest = total - principal;
-        setResult(`Monthly payment: $${monthly.toFixed(2)}\nTotal repayment: $${total.toFixed(2)}\nTotal interest: $${interest.toFixed(2)}`);
+        const result = CocoaToolCore.loanPayment(
+          document.getElementById("loanAmount").value,
+          document.getElementById("loanRate").value,
+          document.getElementById("loanTerm").value
+        );
+        setResult(`Monthly payment: $${result.monthly.toFixed(2)}\nTotal repayment: $${result.total.toFixed(2)}\nTotal interest: $${result.interest.toFixed(2)}\nPayments: ${result.months}`);
         break;
       }
       case "keyword-density": {
@@ -826,40 +834,23 @@ function initToolPage() {
       }
       case "url-parser": {
         const parsed = new URL(value.trim());
+        if (!["http:", "https:"].includes(parsed.protocol)) throw new TypeError("Only HTTP and HTTPS URLs are supported.");
         setResult(`Protocol: ${parsed.protocol}\nHost: ${parsed.host}\nPathname: ${parsed.pathname}\nSearch: ${parsed.search}\nHash: ${parsed.hash}`);
         break;
       }
       case "speed-converter": {
-        const speed = Number(document.getElementById("speedValue").value);
-        const from = document.getElementById("speedFrom").value;
-        const to = document.getElementById("speedTo").value;
-        const map = { "kmh": 1, "mph": 0.621371, "mps": 0.277778, "knot": 0.539957 };
-        const inKmh = speed / map[from];
-        const converted = inKmh * map[to];
-        setResult(`${speed} ${from} = ${converted.toFixed(3)} ${to}`);
+        const speed = document.getElementById("speedValue").value;
+        const from = { kmh: "km/h", mph: "mph", mps: "m/s", knot: "knot" }[document.getElementById("speedFrom").value];
+        const to = { kmh: "km/h", mph: "mph", mps: "m/s", knot: "knot" }[document.getElementById("speedTo").value];
+        setResult(`${speed} ${from} = ${CocoaToolCore.speed(speed, from, to).toFixed(4)} ${to}`);
         break;
       }
       case "unit-converter": {
-        const value = Number(document.getElementById("conversionValue").value);
+        const amount = document.getElementById("conversionValue").value;
         const from = document.getElementById("unitFrom").value;
         const to = document.getElementById("unitTo").value;
-        const conversionMap = {
-          km: 1000, m: 1, cm: 0.01, mile: 1609.344, foot: 0.3048,
-          kg: 1, g: 0.001, lb: 0.453592, oz: 0.0283495,
-          c: 1, f: (value) => (value - 32) * 5/9, k: (value) => value - 273.15
-        };
-        let result;
-        if (from === "c" && to === "f") result = value * 9/5 + 32;
-        else if (from === "f" && to === "c") result = (value - 32) * 5/9;
-        else if (from === "k" && to === "c") result = value - 273.15;
-        else if (from === "c" && to === "k") result = value + 273.15;
-        else if (from === "k" && to === "f") result = (value - 273.15) * 9/5 + 32;
-        else if (from === "f" && to === "k") result = (value - 32) * 5/9 + 273.15;
-        else {
-          const base = value * conversionMap[from];
-          result = base / conversionMap[to];
-        }
-        setResult(`${value} ${from} = ${result.toFixed(4)} ${to}`);
+        const converted = CocoaToolCore.convert(amount, from, to, "length");
+        setResult(`${amount} ${from} = ${converted.toFixed(6)} ${to}`);
         break;
       }
       case "markdown-to-html": {
@@ -875,26 +866,12 @@ function initToolPage() {
         break;
       }
       case "csv-to-json": {
-        const lines = value.trim().split(/\n+/);
-        const [header, ...rows] = lines;
-        const keys = header.split(",").map((item) => item.trim());
-        const json = rows.map((row) => {
-          const values = row.split(",");
-          return Object.fromEntries(keys.map((key, index) => [key, values[index]?.trim() ?? ""]));
-        });
+        const json = CocoaToolCore.parseCsv(value);
         setResult(JSON.stringify(json, null, 2));
         break;
       }
       case "json-to-csv": {
-        try {
-          const parsed = JSON.parse(value);
-          const array = Array.isArray(parsed) ? parsed : [parsed];
-          const headers = [...new Set(array.flatMap((entry) => Object.keys(entry)))];
-          const rows = [headers.join(",")].concat(array.map((entry) => headers.map((header) => JSON.stringify(entry[header] ?? "")).join(",")));
-          setResult(rows.join("\n"));
-        } catch (error) {
-          setResult(`Invalid JSON: ${error.message}`);
-        }
+        setResult(CocoaToolCore.jsonToCsv(value));
         break;
       }
       case "hash-generator": {
@@ -903,7 +880,7 @@ function initToolPage() {
         break;
       }
       default:
-        setResult("This tool is ready for use.");
+        setResult("This tool is not implemented yet. Please choose an available tool from the library.");
     }
   };
 
@@ -923,7 +900,7 @@ function initToolPage() {
     case "password-generator":
       inputWrap.innerHTML = `
         <label for="passLength">Length</label>
-        <input id="passLength" type="number" min="6" max="128" value="16" />
+        <input id="passLength" type="number" min="8" max="128" value="16" />
         <label><input id="includeUpper" type="checkbox" checked /> Uppercase</label>
         <label><input id="includeLower" type="checkbox" checked /> Lowercase</label>
         <label><input id="includeNumbers" type="checkbox" checked /> Numbers</label>
@@ -947,7 +924,16 @@ function initToolPage() {
       inputWrap.innerHTML = '<label for="toolInput">Colors</label><input id="toolInput" type="text" value="#2563eb, #8b5cf6" /><button class="button button-primary" id="runTool">Generate</button>';
       break;
     case "box-shadow-generator":
-      inputWrap.innerHTML = '<button class="button button-primary" id="runTool">Generate shadow</button>';
+      inputWrap.innerHTML = `
+        <label for="shadowX">Horizontal offset (px)</label><input id="shadowX" type="number" min="-100" max="100" value="0" />
+        <label for="shadowY">Vertical offset (px)</label><input id="shadowY" type="number" min="-100" max="100" value="18" />
+        <label for="shadowBlur">Blur radius (px)</label><input id="shadowBlur" type="number" min="0" max="100" value="40" />
+        <label for="shadowSpread">Spread radius (px)</label><input id="shadowSpread" type="number" min="-100" max="100" value="0" />
+        <label for="shadowColor">Shadow color</label><input id="shadowColor" type="color" value="#0f172a" />
+        <label for="shadowOpacity">Opacity (0–1)</label><input id="shadowOpacity" type="number" min="0" max="1" step="0.05" value="0.18" />
+        <label><input id="shadowInset" type="checkbox" /> Inset shadow</label>
+        <button class="button button-primary" id="runTool">Generate CSS</button>
+      `;
       break;
     case "bmi-calculator":
       inputWrap.innerHTML = '<label for="weight">Weight (kg)</label><input id="weight" type="number" value="70" /><label for="height">Height (cm)</label><input id="height" type="number" value="175" /><button class="button button-primary" id="runTool">Calculate BMI</button>';
@@ -997,15 +983,16 @@ function initToolPage() {
       inputWrap.innerHTML = '<label for="toolInput">Text</label><textarea id="toolInput" rows="8" placeholder="Type text to hash..."></textarea><label for="hashAlgo">Algorithm</label><select id="hashAlgo"><option value="SHA-256">SHA-256</option><option value="SHA-1">SHA-1</option><option value="SHA-512">SHA-512</option></select><button class="button button-primary" id="runTool">Generate</button>';
       break;
     default:
-      inputWrap.innerHTML = '<label for="toolInput">Input</label><textarea id="toolInput" rows="10"></textarea><button class="button button-primary" id="runTool">Run</button>';
+      inputWrap.innerHTML = '<p class="form-message">This tool does not have an implementation yet. No sample result will be shown.</p>';
   }
 
   const runButton = document.getElementById("runTool");
-  if (runButton) runButton.addEventListener("click", runTool);
+  if (runButton) runButton.addEventListener("click", () => { try { runTool(); } catch (error) { setResult("Error: " + error.message); } });
 
   if (copyButton) {
     copyButton.addEventListener("click", async () => {
       const text = resultNode.textContent.trim();
+      if (!text) { copyButton.textContent = "Nothing to copy"; return; }
       try {
         await navigator.clipboard.writeText(text);
         copyButton.textContent = "Copied";
@@ -1018,14 +1005,29 @@ function initToolPage() {
 
   if (resetButton) {
     resetButton.addEventListener("click", () => {
-      const field = document.getElementById("toolInput");
-      if (field) field.value = "";
-      resultNode.innerHTML = "";
-      if (document.getElementById("caseType")) document.getElementById("caseType").value = "lowercase";
+      inputWrap.querySelectorAll("input, textarea").forEach(field => {
+        if (field.type === "checkbox") field.checked = field.defaultChecked;
+        else field.value = field.defaultValue;
+      });
+      inputWrap.querySelectorAll("select").forEach(field => field.selectedIndex = 0);
+      resultNode.textContent = "";
+      if (copyButton) copyButton.textContent = "Copy";
     });
   }
+  const downloadButton = document.getElementById("downloadResult");
+  if (downloadButton) downloadButton.addEventListener("click", () => {
+    const text = resultNode.textContent.trim();
+    if (!text) return;
+    const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `cocoa-tools-${tool.slug}-result.txt`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  });
 
-  if (tool.slug === "word-counter") runTool();
+  if (["word-counter", "uuid-generator", "box-shadow-generator"].includes(tool.slug)) { try { runTool(); } catch (error) { setResult("Error: " + error.message); } }
 }
 
 function initPage() {

@@ -45,9 +45,10 @@
           </div>
           <div class="tool-card result-card">
             <h3>Result</h3>
-            <div id="toolResult" class="tool-result"></div>
+            <div id="toolResult" class="tool-result" aria-live="polite" aria-atomic="true"></div>
             <div class="result-actions">
               <button class="button button-primary" id="copyResult">Copy</button>
+              <button class="button button-secondary" id="downloadResult">Download .txt</button>
               <button class="button button-secondary" id="resetTool">Reset</button>
             </div>
           </div>
@@ -65,6 +66,7 @@
     </main>
 
     <footer class="site-footer"><div class="container footer-grid"><div><div class="brand footer-brand"><span class="brand-mark">CT</span><span>COCOA TOOLS</span></div><p>Smart Tools. Simple Solutions.</p></div><div><h4>Explore</h4><ul><li><a href="/tools.html">All tools</a></li><li><a href="/categories.html">Categories</a></li><li><a href="/blog.html">Blog</a></li></ul></div><div><h4>Company</h4><ul><li><a href="/about.html">About</a></li><li><a href="/advertise.html">Advertise</a></li><li><a href="/contact.html">Contact</a></li></ul></div><div><h4>Legal</h4><ul><li><a href="/privacy.html">Privacy Policy</a></li><li><a href="/terms.html">Terms</a></li><li><a href="/cookie.html">Cookie Policy</a></li><li><a href="/disclaimer.html">Disclaimer</a></li></ul></div></div></footer>
+    <script src="/assets/tool-core.js"></script>
     <script src="/assets/app.js"></script>
   </body>
 </html>

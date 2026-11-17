@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COCOA TOOLS | Smart Tools. Simple Solutions.</title>
+    <meta name="description" content="COCOA TOOLS offers free online tools for students, developers, designers, and businesses with fast, useful, and AdSense-friendly tools." />
+    <meta name="theme-color" content="#2563eb" />
+    <meta property="og:title" content="COCOA TOOLS" />
+    <meta property="og:description" content="Smart Tools. Simple Solutions." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/assets/og-cover.svg" />
+    <link rel="canonical" href="https://cocoatools.example.com/" />
+    <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="/" class="brand">
+          <span class="brand-mark">CT</span>
+          <span>COCOA TOOLS</span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="/">Home</a>
+          <a href="/tools.html">All Tools</a>
+          <a href="/categories.html">Categories</a>
+          <a href="/blog.html">Blog</a>
+          <a href="/faq.html">FAQ</a>
+          <a href="/about.html">About</a>
+          <a href="/contact.html">Contact</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+          <a class="button button-primary small" href="/tools.html">Explore tools</a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <p class="eyebrow">Smart Tools. Simple Solutions.</p>
+            <h1>Powerful free tools for work, study, and everyday online tasks.</h1>
+            <p class="subtitle">From developers and designers to students and marketers, COCOA TOOLS brings practical, fast, and high-quality utilities to everyone.</p>
+            <div class="hero-search">
+              <input id="globalSearch" type="search" placeholder="Search tools, categories, or keywords..." aria-label="Tool search" />
+              <button class="button button-primary" id="searchButton">Search</button>
+            </div>
+            <div id="searchSuggestions" class="search-suggestions" aria-live="polite"></div>
+            <div class="hero-meta">
+              <span>500+ utilities</span>
+              <span>Fast & private</span>
+              <span>AdSense-friendly</span>
+            </div>
+          </div>
+          <div class="hero-visual">
+            <div class="dashboard-card card a">
+              <span>Popular</span>
+              <strong>Word Counter</strong>
+              <small>Instantly counts words, characters, and reading time.</small>
+            </div>
+            <div class="dashboard-card card b">
+              <span>Featured</span>
+              <strong>SEO Analyzer</strong>
+              <small>Check keyword density and optimize metadata.</small>
+            </div>
+            <div class="dashboard-card card c">
+              <span>Developer</span>
+              <strong>JSON Formatter</strong>
+              <small>Validate, beautify, and reformat structured data.</small>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Popular tools</p>
+            <h2>Most used utilities</h2>
+          </div>
+          <div class="tool-grid" id="popularTools"></div>
+        </div>
+      </section>
+
+      <section class="section alt-bg">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Recently added</p>
+            <h2>Freshly launched tools</h2>
+          </div>
+          <div class="tool-grid" id="recentTools"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Categories</p>
+            <h2>Browse by topic</h2>
+          </div>
+          <div class="category-grid" id="categoryGrid"></div>
+        </div>
+      </section>
+
+      <section class="section alt-bg">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Featured picks</p>
+            <h2>Recommended for everyday work</h2>
+          </div>
+          <div class="tool-grid" id="featuredTools"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Insights</p>
+            <h2>Latest educational articles</h2>
+          </div>
+          <div class="blog-grid" id="blogGrid"></div>
+        </div>
+      </section>
+
+      <section class="section alt-bg">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">Why choose us</p>
+            <h2>Built for quality, speed, and trust</h2>
+          </div>
+          <div class="feature-grid">
+            <article class="feature-card">
+              <div class="icon">⚡</div>
+              <h3>Fast by design</h3>
+              <p>Minimal friction, instant results, and clean interfaces built for productive everyday tasks.</p>
+            </article>
+            <article class="feature-card">
+              <div class="icon">🔒</div>
+              <h3>Privacy first</h3>
+              <p>Many tools run directly in the browser, reducing risk and keeping your data under your control.</p>
+            </article>
+            <article class="feature-card">
+              <div class="icon">📈</div>
+              <h3>Pro-grade workflow</h3>
+              <p>Useful utilities for SEO, development, business planning, writing, and digital productivity.</p>
+            </article>
+            <article class="feature-card">
+              <div class="icon">💡</div>
+              <h3>Simple to use</h3>
+              <p>Every tool is designed to be intuitive, responsive, and easy to access on any screen size.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-heading">
+            <p class="eyebrow">FAQs</p>
+            <h2>Common questions</h2>
+          </div>
+          <div class="faq-list">
+            <details open>
+              <summary>Are the tools really free?</summary>
+              <p>Yes. Our core tools are built to be useful without paywalls, account requirements, or hidden subscriptions.</p>
+            </details>
+            <details>
+              <summary>Do you use paid APIs?</summary>
+              <p>Not for the core functionality. The site is designed to avoid unnecessary external dependencies for routine utility work.</p>
+            </details>
+            <details>
+              <summary>Is this safe for AdSense?</summary>
+              <p>We design content and layouts with AdSense compliance in mind, including clean navigation, better UX, and no deceptive click patterns.</p>
+            </details>
+            <details>
+              <summary>Can I request a specific tool?</summary>
+              <p>Yes. Use the contact page to suggest new features or categories you want added to the platform.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-grid">
+        <div>
+          <div class="brand footer-brand">
+            <span class="brand-mark">CT</span>
+            <span>COCOA TOOLS</span>
+          </div>
+          <p>Smart Tools. Simple Solutions.</p>
+        </div>
+        <div>
+          <h4>Explore</h4>
+          <ul>
+            <li><a href="/tools.html">All tools</a></li>
+            <li><a href="/categories.html">Categories</a></li>
+            <li><a href="/blog.html">Blog</a></li>
+            <li><a href="/faq.html">FAQ</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Company</h4>
+          <ul>
+            <li><a href="/about.html">About</a></li>
+            <li><a href="/advertise.html">Advertise</a></li>
+            <li><a href="/contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Legal</h4>
+          <ul>
+            <li><a href="/privacy.html">Privacy Policy</a></li>
+            <li><a href="/terms.html">Terms</a></li>
+            <li><a href="/cookie.html">Cookie Policy</a></li>
+            <li><a href="/disclaimer.html">Disclaimer</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="container footer-bottom">
+        <p>© 2026 COCOA TOOLS. All rights reserved.</p>
+        <p><a href="mailto:whopworkwhop@gmail.com">whopworkwhop@gmail.com</a></p>
+      </div>
+    </footer>
+
+    <script src="/assets/app.js"></script>
+  </body>
+</html>

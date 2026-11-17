@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>COCOA TOOLS Tool</title>
+    <meta name="description" content="Use this COCOA TOOLS utility to process data quickly and accurately in the browser." />
+    <link rel="stylesheet" href="/assets/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="container nav-wrap">
+        <a href="/" class="brand"><span class="brand-mark">CT</span><span>COCOA TOOLS</span></a>
+        <nav class="main-nav" aria-label="Main navigation">
+          <a href="/">Home</a>
+          <a href="/tools.html">All Tools</a>
+          <a href="/categories.html">Categories</a>
+          <a href="/blog.html">Blog</a>
+          <a href="/faq.html">FAQ</a>
+          <a href="/about.html">About</a>
+          <a href="/contact.html">Contact</a>
+        </nav>
+        <div class="nav-actions">
+          <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">🌙</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="page-shell tool-page-shell">
+      <section class="section tool-hero">
+        <div class="container tool-layout">
+          <div>
+            <p class="eyebrow">Utility</p>
+            <h1 id="toolTitle">Tool</h1>
+            <p id="toolIntro" class="tool-intro"></p>
+          </div>
+          <a class="button button-secondary" href="/tools.html">Back to tools</a>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container tool-grid-two">
+          <div class="tool-card" id="toolInputCard">
+            <div id="toolInputs"></div>
+          </div>
+          <div class="tool-card result-card">
+            <h3>Result</h3>
+            <div id="toolResult" class="tool-result"></div>
+            <div class="result-actions">
+              <button class="button button-primary" id="copyResult">Copy</button>
+              <button class="button button-secondary" id="resetTool">Reset</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container prose">
+          <h2>How to use it</h2>
+          <ol id="toolSteps"></ol>
+          <h2>FAQs</h2>
+          <div id="toolFaqs" class="faq-list"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><div class="container footer-grid"><div><div class="brand footer-brand"><span class="brand-mark">CT</span><span>COCOA TOOLS</span></div><p>Smart Tools. Simple Solutions.</p></div><div><h4>Explore</h4><ul><li><a href="/tools.html">All tools</a></li><li><a href="/categories.html">Categories</a></li><li><a href="/blog.html">Blog</a></li></ul></div><div><h4>Company</h4><ul><li><a href="/about.html">About</a></li><li><a href="/advertise.html">Advertise</a></li><li><a href="/contact.html">Contact</a></li></ul></div><div><h4>Legal</h4><ul><li><a href="/privacy.html">Privacy Policy</a></li><li><a href="/terms.html">Terms</a></li><li><a href="/cookie.html">Cookie Policy</a></li><li><a href="/disclaimer.html">Disclaimer</a></li></ul></div></div></footer>
+    <script src="/assets/app.js"></script>
+  </body>
+</html>

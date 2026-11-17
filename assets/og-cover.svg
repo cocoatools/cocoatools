@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" aria-label="COCOA TOOLS social cover">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#eff6ff"/>
+      <stop offset="100%" stop-color="#f5f3ff"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#2563eb"/><stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="980" cy="140" r="180" fill="#dbeafe" opacity="0.8"/>
+  <circle cx="150" cy="520" r="200" fill="#ede9fe" opacity="0.7"/>
+  <rect x="90" y="120" width="240" height="90" rx="24" fill="url(#line)"/>
+  <text x="120" y="182" font-size="52" fill="#fff" font-family="Arial, sans-serif" font-weight="700">CT</text>
+  <text x="370" y="190" font-size="76" fill="#111827" font-family="Arial, sans-serif" font-weight="800">COCOA TOOLS</text>
+  <text x="372" y="260" font-size="30" fill="#475569" font-family="Arial, sans-serif">Smart Tools. Simple Solutions.</text>
+  <rect x="372" y="320" width="430" height="120" rx="24" fill="#ffffff" opacity="0.78"/>
+  <text x="420" y="380" font-size="26" fill="#1f2937" font-family="Arial, sans-serif">Free tools for work, learning, and growth</text>
+</svg>
